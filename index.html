@@ -3,101 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juego de Amor 💖</title>
+<title>Nuestra Historia 💜</title>
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Segoe UI', sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI', sans-serif;
 }
 
 body{
-    height:100vh;
-    overflow:hidden;
-    background:linear-gradient(-45deg,#ff4da6,#d633ff,#ff99cc,#cc66ff);
-    background-size:400% 400%;
-    animation:gradient 10s ease infinite;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:white;
+height:100vh;
+overflow:hidden;
+background:linear-gradient(-45deg,#ff4da6,#d633ff,#ff99cc,#cc66ff);
+background-size:400% 400%;
+animation:gradient 10s ease infinite;
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+text-align:center;
 }
 
 @keyframes gradient{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
 }
 
-.container{
-    text-align:center;
+.screen{
+display:none;
+width:100%;
 }
 
-h1{
-    margin-bottom:10px;
+.active{
+display:block;
 }
 
-#gameArea{
-    position:relative;
-    width:90vw;
-    height:60vh;
-    border-radius:20px;
-    margin-top:20px;
-}
-
-.heart{
-    position:absolute;
-    font-size:30px;
-    cursor:pointer;
-    animation:pop 0.3s ease;
-}
-
-@keyframes pop{
-    from{transform:scale(0);}
-    to{transform:scale(1);}
+.card{
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(15px);
+padding:40px;
+border-radius:25px;
+box-shadow:0 0 40px rgba(255,0,255,0.4);
+width:90%;
+max-width:500px;
+margin:auto;
 }
 
 button{
-    margin-top:20px;
-    padding:12px 25px;
-    border:none;
-    border-radius:30px;
-    font-weight:bold;
-    background:#ff66cc;
-    color:white;
-    cursor:pointer;
-    transition:0.3s;
+margin-top:20px;
+padding:12px 25px;
+border:none;
+border-radius:30px;
+font-weight:bold;
+background:#ff66cc;
+color:white;
+cursor:pointer;
+transition:0.3s;
 }
 
 button:hover{
-    background:#ff1a8c;
-    transform:scale(1.1);
+background:#ff1a8c;
+transform:scale(1.1);
+}
+
+.heart{
+position:absolute;
+font-size:25px;
+cursor:pointer;
 }
 
 .finalMessage{
-    font-size:1.8em;
-    margin-top:20px;
-    animation:fadeIn 1s ease forwards;
+font-size:1.8em;
+margin-top:20px;
+animation:fade 1s ease forwards;
 }
 
-@keyframes fadeIn{
-    from{opacity:0;}
-    to{opacity:1;}
+@keyframes fade{
+from{opacity:0;}
+to{opacity:1;}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>💜 Atrapa 10 corazones en 10 segundos 💖</h1>
-    <p>Puntuación: <span id="score">0</span></p>
-    <p>Tiempo: <span id="time">10</span>s</p>
-    <div id="gameArea"></div>
-    <div id="result"></div>
-    <button onclick="startGame()">Empezar 💕</button>
+<!-- PANTALLA 1 -->
+<div class="screen active" id="intro">
+<div class="card">
+<h1>💜 Tengo algo especial para ti 💖</h1>
+<p>Pero primero quiero que superes un pequeño reto...</p>
+<button onclick="startGameScreen()">Aceptar reto 💕</button>
+</div>
+</div>
+
+<!-- PANTALLA 2 - JUEGO -->
+<div class="screen" id="game">
+<div class="card">
+<h2>Atrapa 8 corazones en 10 segundos 💘</h2>
+<p>Puntuación: <span id="score">0</span></p>
+<p>Tiempo: <span id="time">10</span>s</p>
+<div id="gameArea" style="position:relative;height:300px;"></div>
+</div>
+</div>
+
+<!-- PANTALLA 3 - FINAL -->
+<div class="screen" id="final">
+<div class="card">
+<div id="finalText"></div>
+</div>
 </div>
 
 <script>
@@ -106,59 +122,63 @@ let timeLeft=10;
 let gameInterval;
 let timerInterval;
 
-const gameArea=document.getElementById("gameArea");
+function startGameScreen(){
+document.getElementById("intro").classList.remove("active");
+document.getElementById("game").classList.add("active");
+startGame();
+}
 
 function startGame(){
-    score=0;
-    timeLeft=10;
-    document.getElementById("score").innerText=score;
-    document.getElementById("time").innerText=timeLeft;
-    document.getElementById("result").innerHTML="";
-    gameArea.innerHTML="";
+score=0;
+timeLeft=10;
+document.getElementById("score").innerText=score;
+document.getElementById("time").innerText=timeLeft;
 
-    gameInterval=setInterval(createHeart,600);
-    timerInterval=setInterval(updateTimer,1000);
+gameInterval=setInterval(createHeart,600);
+timerInterval=setInterval(updateTimer,1000);
 }
 
 function createHeart(){
-    const heart=document.createElement("div");
-    heart.classList.add("heart");
-    heart.innerHTML="💖";
+const heart=document.createElement("div");
+heart.classList.add("heart");
+heart.innerHTML="💖";
 
-    heart.style.left=Math.random()*80+"vw";
-    heart.style.top=Math.random()*50+"vh";
+heart.style.left=Math.random()*250+"px";
+heart.style.top=Math.random()*200+"px";
 
-    heart.onclick=function(){
-        score++;
-        document.getElementById("score").innerText=score;
-        heart.remove();
-    };
+heart.onclick=function(){
+score++;
+document.getElementById("score").innerText=score;
+heart.remove();
+};
 
-    gameArea.appendChild(heart);
+document.getElementById("gameArea").appendChild(heart);
 
-    setTimeout(()=>{heart.remove();},1500);
+setTimeout(()=>{heart.remove();},1500);
 }
 
 function updateTimer(){
-    timeLeft--;
-    document.getElementById("time").innerText=timeLeft;
+timeLeft--;
+document.getElementById("time").innerText=timeLeft;
 
-    if(timeLeft<=0){
-        clearInterval(gameInterval);
-        clearInterval(timerInterval);
-        endGame();
-    }
+if(timeLeft<=0){
+clearInterval(gameInterval);
+clearInterval(timerInterval);
+endGame();
+}
 }
 
 function endGame(){
-    gameArea.innerHTML="";
-    if(score>=10){
-        document.getElementById("result").innerHTML=
-        "<div class='finalMessage'>🎉 ¡Ganaste! 💘<br>Ahora dime... ¿Quieres ser mi San Valentín? 💜</div>";
-    }else{
-        document.getElementById("result").innerHTML=
-        "<div class='finalMessage'>😢 Casi lo logras... Intenta otra vez 💗</div>";
-    }
+document.getElementById("game").classList.remove("active");
+document.getElementById("final").classList.add("active");
+
+if(score>=8){
+document.getElementById("finalText").innerHTML=
+"🎉 Lo lograste 💘<br><br>La verdad es que no importa el juego...<br>Lo único que quiero saber es...<br><br><b>¿Quieres ser mi San Valentín? 💜</b><br><br>Prometo hacerte sonreír todos los días 💕";
+}else{
+document.getElementById("finalText").innerHTML=
+"😢 Casi lo logras... pero igual tengo que decirte algo...<br><br><b>Quiero que seas mi San Valentín 💖</b><br><br>No importa el resultado, siempre te elegiría a ti 💜";
+}
 }
 </script>
 
