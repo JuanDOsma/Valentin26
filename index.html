@@ -3,39 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Feliz San Valentín ❤️</title>
+<title>Juego de Amor 💖</title>
 
 <style>
-body{
+*{
     margin:0;
     padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+body{
     height:100vh;
+    overflow:hidden;
+    background:linear-gradient(-45deg,#ff4da6,#d633ff,#ff99cc,#cc66ff);
+    background-size:400% 400%;
+    animation:gradient 10s ease infinite;
     display:flex;
     justify-content:center;
     align-items:center;
-    background:linear-gradient(135deg,#ff758c,#ff7eb3);
-    font-family:'Segoe UI', sans-serif;
-    overflow:hidden;
-    text-align:center;
     color:white;
 }
 
+@keyframes gradient{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
 .container{
-    background:rgba(255,255,255,0.15);
-    backdrop-filter:blur(10px);
-    padding:40px;
-    border-radius:20px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.2);
-    animation:fadeIn 2s ease-in-out;
+    text-align:center;
 }
 
 h1{
-    font-size:3em;
     margin-bottom:10px;
 }
 
-p{
-    font-size:1.3em;
+#gameArea{
+    position:relative;
+    width:90vw;
+    height:60vh;
+    border-radius:20px;
+    margin-top:20px;
+}
+
+.heart{
+    position:absolute;
+    font-size:30px;
+    cursor:pointer;
+    animation:pop 0.3s ease;
+}
+
+@keyframes pop{
+    from{transform:scale(0);}
+    to{transform:scale(1);}
 }
 
 button{
@@ -43,35 +64,27 @@ button{
     padding:12px 25px;
     border:none;
     border-radius:30px;
-    background:white;
-    color:#ff4b6e;
     font-weight:bold;
+    background:#ff66cc;
+    color:white;
     cursor:pointer;
     transition:0.3s;
 }
 
 button:hover{
-    background:#ff4b6e;
-    color:white;
+    background:#ff1a8c;
     transform:scale(1.1);
 }
 
+.finalMessage{
+    font-size:1.8em;
+    margin-top:20px;
+    animation:fadeIn 1s ease forwards;
+}
+
 @keyframes fadeIn{
-    from{opacity:0; transform:translateY(20px);}
-    to{opacity:1; transform:translateY(0);}
-}
-
-/* Corazones flotando */
-.heart{
-    position:absolute;
-    color:white;
-    font-size:20px;
-    animation:float 6s linear infinite;
-}
-
-@keyframes float{
-    0%{transform:translateY(100vh) scale(0);}
-    100%{transform:translateY(-10vh) scale(1.5);}
+    from{opacity:0;}
+    to{opacity:1;}
 }
 </style>
 </head>
@@ -79,36 +92,74 @@ button:hover{
 <body>
 
 <div class="container">
-    <h1>❤️ Feliz San Valentín ❤️</h1>
-    <p id="mensaje">
-        Hoy quiero recordarte lo especial que eres para mí.
-        Gracias por llenar mi vida de amor.
-    </p>
-    <button onclick="cambiarMensaje()">Haz clic aquí 💕</button>
+    <h1>💜 Atrapa 10 corazones en 10 segundos 💖</h1>
+    <p>Puntuación: <span id="score">0</span></p>
+    <p>Tiempo: <span id="time">10</span>s</p>
+    <div id="gameArea"></div>
+    <div id="result"></div>
+    <button onclick="startGame()">Empezar 💕</button>
 </div>
 
 <script>
-function cambiarMensaje(){
-    document.getElementById("mensaje").innerHTML =
-    "Eres mi persona favorita, mi sonrisa diaria y mi razón de felicidad. Te amo muchísimo ❤️";
+let score=0;
+let timeLeft=10;
+let gameInterval;
+let timerInterval;
+
+const gameArea=document.getElementById("gameArea");
+
+function startGame(){
+    score=0;
+    timeLeft=10;
+    document.getElementById("score").innerText=score;
+    document.getElementById("time").innerText=timeLeft;
+    document.getElementById("result").innerHTML="";
+    gameArea.innerHTML="";
+
+    gameInterval=setInterval(createHeart,600);
+    timerInterval=setInterval(updateTimer,1000);
 }
 
-// Crear corazones flotando
-function crearCorazon(){
-    const heart = document.createElement("div");
+function createHeart(){
+    const heart=document.createElement("div");
     heart.classList.add("heart");
-    heart.innerHTML = "❤️";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = (Math.random() * 20 + 15) + "px";
-    heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
-    document.body.appendChild(heart);
+    heart.innerHTML="💖";
 
-    setTimeout(() => {
+    heart.style.left=Math.random()*80+"vw";
+    heart.style.top=Math.random()*50+"vh";
+
+    heart.onclick=function(){
+        score++;
+        document.getElementById("score").innerText=score;
         heart.remove();
-    }, 6000);
+    };
+
+    gameArea.appendChild(heart);
+
+    setTimeout(()=>{heart.remove();},1500);
 }
 
-setInterval(crearCorazon, 300);
+function updateTimer(){
+    timeLeft--;
+    document.getElementById("time").innerText=timeLeft;
+
+    if(timeLeft<=0){
+        clearInterval(gameInterval);
+        clearInterval(timerInterval);
+        endGame();
+    }
+}
+
+function endGame(){
+    gameArea.innerHTML="";
+    if(score>=10){
+        document.getElementById("result").innerHTML=
+        "<div class='finalMessage'>🎉 ¡Ganaste! 💘<br>Ahora dime... ¿Quieres ser mi San Valentín? 💜</div>";
+    }else{
+        document.getElementById("result").innerHTML=
+        "<div class='finalMessage'>😢 Casi lo logras... Intenta otra vez 💗</div>";
+    }
+}
 </script>
 
 </body>
